@@ -6,9 +6,10 @@ var proxy = require('./proxy');
 
 var cache = (duration) => {
   return (req, res, next) => {
-    let key = '__express__' + req.originalUrl || req.url
+    let key = req.originalUrl || req.url
     let cachedBody = mcache.get(key)
     if (cachedBody) {
+      console.log('cached....')
       res.send(cachedBody)
       return
     } else {
@@ -26,7 +27,7 @@ app.get('/', (req, res) => {
   res.send('ok');
 })
 
-app.use('/search/', (req, res) => {
+app.use('/search/', cache(60), (req, res) => {
   console.log('req ',req.headers.origin);
   //todo move to proxy
   if (req.headers.origin === 'http://localhost:3000') {
@@ -34,7 +35,8 @@ app.use('/search/', (req, res) => {
   } else if (req.headers.origin === 'http://localhost:3001'){
     proxy.mamasProxy(req, res);
   } else {
-    res.status(403).send('');
+    res.send('ok');
+    //res.status(403).send('');
   }
 });
 
