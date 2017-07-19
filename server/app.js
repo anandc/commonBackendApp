@@ -23,22 +23,33 @@ var cache = (duration) => {
   }
 }
 
-app.get('/', (req, res) => {
-  res.send('ok');
-})
-
-app.use('/search/', cache(60), (req, res) => {
-  console.log('req ',req.headers.origin);
-  //todo move to proxy
+var proxyFactory = (req, res) => {
   if (req.headers.origin === 'http://localhost:3000') {
     proxy.ounassProxy(req, res);
   } else if (req.headers.origin === 'http://localhost:3001'){
     proxy.mamasProxy(req, res);
   } else {
-    res.send('ok');
-    //res.status(403).send('');
+    res.status(403).send('');
   }
-});
+},
+logProxy = (req, res) => {
+  console.log(req.url)
+  if (req.url === '/logo_en.svg') {
+    proxy.ounassProxy(req, res);
+  } else if (req.url === '/logo_en_ae.png'){
+    proxy.mamasProxy(req, res);
+  } else {
+    res.status(403).send('');
+  }
+};
+
+app.get('/', (req, res) => {
+  res.send('ok');
+})
+
+app.use('/search/', cache(60), proxyFactory);
+app.use('/colors/', cache(60), proxyFactory);
+app.use('/img/', cache(60), logProxy);
 
 app.use((req, res) => {
   res.status(404).send('') //not found

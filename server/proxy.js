@@ -8,7 +8,9 @@ const ounassProxy = proxy({
     changeOrigin: true,
     xfwd: true,
     pathRewrite: {
-        '/search/' : '/full/'
+        '/search/' : '/search/full/',
+        '/colors/' : '/directory/colors/',
+        '/img/' : '/img/layout/'
     }
 }),
 mamasProxy = proxy({
@@ -16,11 +18,13 @@ mamasProxy = proxy({
     changeOrigin: true,
     xfwd: true,
     pathRewrite: {
-        '/search/' : '/full/'
+        '/search/' : '/search/full/',
+        '/colors/' : '/directory/colors/',
+        '/img/' : '/img/layout/'
     }
 });
 
 module.exports = {
-	ounassProxy: ounassProxy,
-	mamasProxy: mamasProxy
+	ounassProxy,
+	mamasProxy
 };
